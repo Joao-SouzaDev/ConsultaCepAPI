@@ -2,3 +2,5 @@
 
 GET {{ConsultaCepAPI_HostAddress}}/cep/88352660
 ###
+GET {{ConsultaCepAPI_HostAddress}}/cep?estado=SC&cidade=Brusque&logradouro=centro
+###

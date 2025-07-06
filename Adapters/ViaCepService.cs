@@ -33,5 +33,33 @@ namespace ConsultaCepAPI.Adapters
                 throw new RequestExceptions(erro);
             }
         }
+
+        public async Task<List<CepResponse>> BuscaCepPorEstadoCidadeLogradouro(string estado, string cidade, string logradouro)
+        {
+            var httpCliente = _httpClientFactory.CreateClient("ViaCep");
+            var response = await httpCliente.GetAsync($"{estado}/{cidade}/{logradouro}/json");
+            if(response.IsSuccessStatusCode)
+            {
+                var viaCepResponse = await response.Content.ReadFromJsonAsync<List<ViaCepResponse>>();
+                try
+                {
+                    if (viaCepResponse == null || !viaCepResponse.Any())
+                    {
+                        return new List<CepResponse>();
+                    }
+                    var cepResponses = viaCepResponse.Select(viaCep => 
+                        CepResponse.ToCeResponse(viaCep.cep, viaCep.uf, viaCep.estado, viaCep.localidade, viaCep.bairro, viaCep.logradouro, viaCep.complemento)).ToList();
+                    return cepResponses;
+                }catch(Exception ex)
+                {
+                    throw new RequestExceptions(ex.Message,ex);
+                }
+            }
+            else
+            {
+                var erro = await response.Content.ReadAsStringAsync();
+                throw new RequestExceptions(erro);
+            }
+        }
     }
 }

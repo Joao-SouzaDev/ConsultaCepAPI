@@ -21,6 +21,20 @@ namespace ConsultaCepAPI.Endpoints
                     throw new Exception(ex.Message);
                 }
             });
+            app.MapGet("/cep", async (string estado, string cidade, string logradouro, ICepService cepService) =>
+            {
+                try
+                {
+                    var resultadoPesquisa = await cepService.BuscaEndereco(estado, cidade, logradouro);
+                    return Results.Ok(resultadoPesquisa);
+                }catch(RequestExceptions ex)
+                {
+                    return Results.BadRequest(ex.Message);
+                }catch(Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            });
         }
     }
 }

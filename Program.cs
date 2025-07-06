@@ -22,6 +22,15 @@ builder.Services.AddHttpClient("ViaCep", httpClient =>
 });
 builder.Services.AddScoped<ICepService, CepService>();
 builder.Services.AddScoped<IViaCepService, ViaCepService>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 var app = builder.Build();
 app.MapCepEndpoints();
 // Configure the HTTP request pipeline.
@@ -30,7 +39,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 
